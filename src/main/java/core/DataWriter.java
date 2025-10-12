@@ -1,8 +1,13 @@
+package core;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.concurrent.BlockingQueue;
 
 public class DataWriter implements Runnable {
-    FileFormat format;
-    BlockingQueue<DataRecord> records;
+    private final FileFormat format;
+    private final BlockingQueue<DataRecord> records;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public DataWriter(BlockingQueue<DataRecord> records, FileFormat format) {
         this.records = records;
