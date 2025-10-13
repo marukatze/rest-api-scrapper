@@ -5,6 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.DataRecord;
 
 public abstract class APIParser {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    protected static final ObjectMapper mapper = new ObjectMapper();
     public abstract DataRecord parse(String json) throws JsonProcessingException;
 }
