@@ -5,6 +5,11 @@ import parsers.ACHNParser;
 import parsers.CatsFactParser;
 import parsers.DnDParser;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
@@ -16,9 +21,9 @@ public class APIPoller implements Runnable{
         urls.put(Source.ACHN, "https://acnhapi.com/v1/villagers/");
         urls.put(Source.CATS, "https://cat-fact.herokuapp.com/");
         urls.put(Source.DND, "https://www.dnd5eapi.co/api/2014/monsters/");
-    };
+    }
     private final BlockingQueue<DataRecord> records;
-    private String json;
+    private static final HttpClient client = HttpClient.newHttpClient();
 
     public APIPoller(Source source, BlockingQueue<DataRecord> records) {
         this.source = source;
@@ -29,16 +34,33 @@ public class APIPoller implements Runnable{
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            poll();
-            parse();
+            String json = poll();
+            parse(json);
         }
     }
 
-    private void poll() {
-        // work with URL
+    private String poll() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return response.body();
+            } else {
+                // kind of logging
+                return "{}";
+            }
+
+        } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // kind of logging
+            return "{}";
+        }
     }
 
-    private void parse() {
+    private void parse(String json) {
         try {
             DataRecord record = switch (source) {
                 case CATS -> new CatsFactParser().parse(json);
