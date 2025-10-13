@@ -12,7 +12,6 @@ public class CatsFactParser extends APIParser {
     @Override
     public DataRecord parse(String json) throws JsonProcessingException {
         JsonNode node = new ObjectMapper().readTree(json);
-
         return new DataRecord(
                 "cat-fact-api",
                 "cat fact",
