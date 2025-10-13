@@ -12,10 +12,9 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class RequestCreator {
+public class RandomRequestBuilder {
     private final Source source;
     private static final Random random = new Random();
     private final List<String> monsters = new ArrayList<>();
@@ -24,7 +23,7 @@ public class RequestCreator {
     private boolean initialized = false;
 
 
-    public RequestCreator(Source source) {
+    public RandomRequestBuilder(Source source) {
         this.source = source;
     }
 

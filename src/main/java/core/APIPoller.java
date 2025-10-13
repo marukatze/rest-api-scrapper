@@ -1,6 +1,6 @@
 package core;
 
-import utils.RequestCreator;
+import utils.RandomRequestBuilder;
 import utils.ParserFactory;
 
 import java.io.IOException;
@@ -16,12 +16,12 @@ public class APIPoller implements Runnable {
     private final BlockingQueue<DataRecord> records;
     private static final HttpClient client = HttpClient.newHttpClient();
     private final int timeout;
-    private final RequestCreator creator;
+    private final RandomRequestBuilder creator;
 
     public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
         this.source = source;
         this.records = records;
-        creator = new RequestCreator(source);
+        creator = new RandomRequestBuilder(source);
         timeout = t;
     }
 
