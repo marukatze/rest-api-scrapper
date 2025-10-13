@@ -12,30 +12,40 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-public class APIPoller implements Runnable{
+public class APIPoller implements Runnable {
     private final String url;
     private final Source source;
     private final HashMap<Source, String> urls = new HashMap<>();
+
     {
         urls.put(Source.ACHN, "https://acnhapi.com/v1/villagers/");
         urls.put(Source.CATS, "https://cat-fact.herokuapp.com/");
         urls.put(Source.DND, "https://www.dnd5eapi.co/api/2014/monsters/");
     }
+
     private final BlockingQueue<DataRecord> records;
     private static final HttpClient client = HttpClient.newHttpClient();
+    private final int timeout;
 
-    public APIPoller(Source source, BlockingQueue<DataRecord> records) {
+    public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
         this.source = source;
         url = urls.get(source);
         this.records = records;
+        timeout = t;
     }
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            String json = poll();
-            parse(json);
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                String json = poll();
+                parse(json);
+                TimeUnit.SECONDS.sleep(timeout);
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
