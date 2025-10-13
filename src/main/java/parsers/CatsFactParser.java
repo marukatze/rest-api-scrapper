@@ -8,7 +8,7 @@ import core.DataRecord;
 
 import java.time.LocalDateTime;
 
-public class CatsFactParser implements APIParser {
+public class CatsFactParser extends APIParser {
     @Override
     public DataRecord parse(String json) throws JsonProcessingException {
         JsonNode node = new ObjectMapper().readTree(json);
