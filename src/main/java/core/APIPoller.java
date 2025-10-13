@@ -31,6 +31,7 @@ public class APIPoller implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 String json = poll();
+                if (json == null || json.isBlank()) continue;
                 records.put(factory.parse(json));
                 TimeUnit.SECONDS.sleep(timeout);
             }
