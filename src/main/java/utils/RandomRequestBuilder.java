@@ -1,5 +1,6 @@
 package utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import core.Source;
@@ -17,8 +18,8 @@ import java.util.Random;
 public class RandomRequestBuilder {
     private final Source source;
     private static final Random random = new Random();
-    private final List<String> monsters = new ArrayList<>();
-    private final List<String> spells = new ArrayList<>();
+    private List<String> monsters = new ArrayList<>();
+    private List<String> spells = new ArrayList<>();
     private static final HttpClient client = HttpClient.newHttpClient();
     private boolean initialized = false;
 
@@ -29,8 +30,8 @@ public class RandomRequestBuilder {
 
     private void ensureInitialized() throws IOException, InterruptedException {
         if (!initialized) {
-            getMonsters();
-            getSpells();
+            spells = getEntities("spells");
+            monsters = getEntities("monsters");
             initialized = true;
         }
     }
@@ -57,9 +58,9 @@ public class RandomRequestBuilder {
         return dataType + requestEntity;
     }
 
-    private void getMonsters() throws IOException, InterruptedException {
+    private List<String> getEntities(String entity) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.dnd5eapi.co/api/2014/monsters"))
+                .uri(URI.create("https://www.dnd5eapi.co/api/2014/" + entity))
                 .header("Accept", "application/json")
                 .GET()
                 .build();
@@ -68,28 +69,13 @@ public class RandomRequestBuilder {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(json);
-        JsonNode results = root.get("results"); // это массив монстров
+        JsonNode results = root.get("results");
 
-        for (JsonNode monster : results) {
-            monsters.add(monster.get("index").asText()); // или get("name"), если нужно именно имя
+        List<String> entities = new ArrayList<>();
+        for (JsonNode node : results) {
+            entities.add(node.get("index").asText());
         }
-    }
 
-    private void getSpells() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.dnd5eapi.co/api/2014/spells"))
-                .header("Accept", "application/json")
-                .GET()
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        String json = response.body();
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(json);
-        JsonNode results = root.get("results"); // это массив монстров
-
-        for (JsonNode monster : results) {
-            spells.add(monster.get("index").asText()); // или get("name"), если нужно именно имя
-        }
+        return entities;
     }
 }
