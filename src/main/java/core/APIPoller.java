@@ -1,47 +1,37 @@
 package core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import parsers.ACHNParser;
-import parsers.CatsFactParser;
-import parsers.DnDParser;
+import utils.RequestCreator;
+import utils.ParserFactory;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class APIPoller implements Runnable {
-    private final String url;
     private final Source source;
-    private final HashMap<Source, String> urls = new HashMap<>();
-
-    {
-        urls.put(Source.ACHN, "https://acnhapi.com/v1/villagers/");
-        urls.put(Source.CATS, "https://cat-fact.herokuapp.com/");
-        urls.put(Source.DND, "https://www.dnd5eapi.co/api/2014/monsters/");
-    }
-
     private final BlockingQueue<DataRecord> records;
     private static final HttpClient client = HttpClient.newHttpClient();
     private final int timeout;
+    private final RequestCreator creator;
 
     public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
         this.source = source;
-        url = urls.get(source);
         this.records = records;
+        creator = new RequestCreator(source);
         timeout = t;
     }
 
     @Override
     public void run() {
+        ParserFactory factory = new ParserFactory(source);
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 String json = poll();
-                parse(json);
+                records.put(factory.parse(json));
                 TimeUnit.SECONDS.sleep(timeout);
             }
         } catch (InterruptedException e) {
@@ -50,6 +40,7 @@ public class APIPoller implements Runnable {
     }
 
     private String poll() {
+        String url = creator.randomizeURL();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .GET()
@@ -67,19 +58,6 @@ public class APIPoller implements Runnable {
             Thread.currentThread().interrupt();
             // kind of logging
             return "{}";
-        }
-    }
-
-    private void parse(String json) {
-        try {
-            DataRecord record = switch (source) {
-                case CATS -> new CatsFactParser().parse(json);
-                case ACHN -> new ACHNParser().parse(json);
-                case DND -> new DnDParser().parse(json);
-            };
-            records.put(record);
-        } catch (JsonProcessingException | InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }
