@@ -8,7 +8,7 @@ import parsers.CatsFactParser;
 import parsers.DnDParser;
 
 public class ParserFactory {
-    private Source source;
+    private final Source source;
 
     public ParserFactory(Source source) {
         this.source = source;
