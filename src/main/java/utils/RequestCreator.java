@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,22 +18,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RequestCreator {
     private final Source source;
     private static final Random random = new Random();
-    private final List<String> monsters = new CopyOnWriteArrayList<>();
-    private final List<String> spells = new CopyOnWriteArrayList<>();
+    private final List<String> monsters = new ArrayList<>();
+    private final List<String> spells = new ArrayList<>();
     private static final HttpClient client = HttpClient.newHttpClient();
+    private boolean initialized = false;
 
 
     public RequestCreator(Source source) {
         this.source = source;
-        try {
+    }
+
+    private void ensureInitialized() throws IOException, InterruptedException {
+        if (!initialized) {
             getMonsters();
             getSpells();
-        } catch (IOException | InterruptedException e) {
-            Thread.currentThread().interrupt();
+            initialized = true;
         }
     }
 
-    public String randomizeURL() {
+    public String randomizeURL() throws IOException, InterruptedException {
+        ensureInitialized();
         return switch (source) {
             case ACHN -> "https://acnhapi.com/v1/villagers/" + random.nextInt(1,390);
             case CATS -> "https://cat-fact.herokuapp.com/" + "facts";

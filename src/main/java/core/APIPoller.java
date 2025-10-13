@@ -34,12 +34,12 @@ public class APIPoller implements Runnable {
                 records.put(factory.parse(json));
                 TimeUnit.SECONDS.sleep(timeout);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String poll() {
+    private String poll() throws IOException, InterruptedException {
         String url = creator.randomizeURL();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
