@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 public class APIPoller implements Runnable{
     private final String url;
     private final Source source;
-    HashMap<Source, String> urls = new HashMap<>();
+    private final HashMap<Source, String> urls = new HashMap<>();
     {
         urls.put(Source.ACHN, "");
         urls.put(Source.CATS, "");
