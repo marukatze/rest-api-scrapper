@@ -1,11 +1,24 @@
 package parsers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import core.APIParser;
 import core.DataRecord;
 
+import java.time.LocalDateTime;
+
 public class ACHNParser implements APIParser {
     @Override
-    public DataRecord parse() {
-        return null;
+    public DataRecord parse(String json) throws JsonProcessingException {
+        JsonNode node = new ObjectMapper().readTree(json);
+        return new DataRecord(
+                "achn-api",
+                node.get("name").get("name-USen").asText(),
+                "personality: " + node.get("personality").asText() +
+                "\nbirthday: " + node.get("birthday").asText() +
+                "\nspecies: " + node.get("species").asText() +
+                "\ngender: " + node.get("gender").asText(),
+                LocalDateTime.now());
     }
 }
