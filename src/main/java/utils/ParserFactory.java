@@ -7,6 +7,7 @@ import parsers.ACHNParser;
 import parsers.CatsFactParser;
 import parsers.DnDParser;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class ParserFactory {
     private final Source source;
 
