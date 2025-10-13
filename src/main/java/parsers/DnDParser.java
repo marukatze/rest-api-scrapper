@@ -9,8 +9,6 @@ import core.DataRecord;
 import java.time.LocalDateTime;
 
 public class DnDParser implements APIParser {
-    private final String source = "dnd-api";
-
     @Override
     public DataRecord parse(String json) throws JsonProcessingException {
         JsonNode node = new ObjectMapper().readTree(json);
