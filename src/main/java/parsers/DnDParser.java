@@ -3,7 +3,7 @@ package parsers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import core.APIParser;
+import utils.APIParser;
 import core.DataRecord;
 
 import java.time.LocalDateTime;
