@@ -13,9 +13,9 @@ public class APIPoller implements Runnable{
     private final Source source;
     private final HashMap<Source, String> urls = new HashMap<>();
     {
-        urls.put(Source.ACHN, "");
-        urls.put(Source.CATS, "");
-        urls.put(Source.DND, "");
+        urls.put(Source.ACHN, "https://acnhapi.com/v1/villagers/");
+        urls.put(Source.CATS, "https://cat-fact.herokuapp.com/");
+        urls.put(Source.DND, "https://www.dnd5eapi.co/api/2014/monsters/");
     };
     private final BlockingQueue<DataRecord> records;
     private String json;
