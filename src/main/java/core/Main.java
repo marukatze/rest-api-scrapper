@@ -29,11 +29,9 @@ public class Main {
             tasks.add(new APIPoller(source, queue, t));
         }
 
-        try (ExecutorService pollers = Executors.newFixedThreadPool(n);
-             ExecutorService dataWriter = Executors.newSingleThreadExecutor()) {
-
+        try (ExecutorService pollers = Executors.newFixedThreadPool(n)) {
+            new Thread(new DataWriter(queue, format)).start();
             tasks.forEach(pollers::submit);
-            datawriter.submit(new DataWriter(queue, format));
         }
 
 
