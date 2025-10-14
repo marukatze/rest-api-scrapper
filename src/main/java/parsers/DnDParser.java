@@ -2,7 +2,6 @@ package parsers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import utils.APIParser;
 import core.DataRecord;
 
