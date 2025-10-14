@@ -12,11 +12,11 @@ import java.util.concurrent.*;
 public class Main {
     private static int n;
     private static int t;
-    private static List<Source> sources;
+    private static final List<Source> sources = new ArrayList<>();
     private static FileFormat format;
 
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         try {
             parseArgs(args);
         } catch (InvalidFileFormat | InvalidSource | NumberFormatException e) {
@@ -29,21 +29,23 @@ public class Main {
             tasks.add(new APIPoller(source, queue, t));
         }
 
-        try (ExecutorService executors = Executors.newFixedThreadPool(n + 1)) {
-            executors.submit(new DataWriter(queue, format));
-            tasks.forEach(executors::submit);
+        ExecutorService executors = Executors.newFixedThreadPool(n + 1);
+        executors.submit(new DataWriter(queue, format));
+        tasks.forEach(executors::submit);
 
-        }
-
-
+        //graceful shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            executors.shutdownNow();
+            System.out.println("Executor stopped.");
+        }));
     }
 
 
     private static void parseArgs(String[] args) throws InvalidFileFormat, NumberFormatException {
         List<String> params = new java.util.ArrayList<>(Arrays.stream(args).toList());
-        n = Integer.parseInt(params.getFirst());
-        params.removeFirst();
+        n = Integer.parseInt(params.get(0));
         t = Integer.parseInt(params.get(1));
+        params.remove(0);
         params.remove(1);
 
         if (params.getLast().toLowerCase().contains("json")) {
