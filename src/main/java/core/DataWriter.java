@@ -18,6 +18,7 @@ public class DataWriter implements Runnable {
 
     public void write() throws InterruptedException, IOException {
         DataRecord currentRecord = records.take();
+        System.out.println("current record to write: " + currentRecord);
 
         switch (format) {
             case JSON -> writeJSON(currentRecord);
@@ -38,8 +39,7 @@ public class DataWriter implements Runnable {
             String csvLine = String.join(",",
                     record.source(),
                     record.title(),
-                    record.content(),
-                    record.fetchedAt().toString());
+                    record.content());
             writer.write(csvLine + System.lineSeparator());
         }
     }
@@ -49,6 +49,7 @@ public class DataWriter implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 write();
+                System.out.println("record is written correctly");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (IOException e) {

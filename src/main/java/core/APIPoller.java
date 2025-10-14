@@ -17,12 +17,14 @@ public class APIPoller implements Runnable {
     private final int timeout;
     private final RandomRequestBuilder creator;
     private final ParserFactory factory;
+    private Source source;
 
     public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
         this.records = records;
         creator = new RandomRequestBuilder(source);
         timeout = t;
         factory = new ParserFactory(source);
+        this.source = source;
     }
 
     @Override
@@ -30,8 +32,13 @@ public class APIPoller implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 String json = poll();
-                if (json == null || json.isBlank()) continue;
+                System.out.println(source + " response is taken correctly: " + json);
+                if (json == null || json.isBlank() || json.equals("{}")) {
+                    System.out.println("empty response");
+                    continue;
+                }
                 records.put(factory.parse(json));
+                System.out.println(source + " ready to sleep");
                 TimeUnit.SECONDS.sleep(timeout);
             }
         } catch (InterruptedException | IOException e) {

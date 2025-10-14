@@ -6,13 +6,14 @@ import utils.APIParser;
 import core.DataRecord;
 
 
-public class DnDParser extends APIParser {
+
+public class JokesParser extends APIParser {
     @Override
     public DataRecord parse(String json) throws JsonProcessingException {
         JsonNode node = mapper.readTree(json);
         return new DataRecord(
-                "dnd-api",
-                node.get("name").asText(),
-                node.get("desc").toString());
+                "geek-jokes-api",
+                "Chuck Norris joke",
+                node.get("joke").asText());
     }
 }

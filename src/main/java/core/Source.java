@@ -2,6 +2,6 @@ package core;
 
 public enum Source {
     CATS,
-    ACHN,
+    JOKES,
     DND
 }

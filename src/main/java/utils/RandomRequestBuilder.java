@@ -38,8 +38,8 @@ public class RandomRequestBuilder {
     public String randomizeURL() throws IOException, InterruptedException {
         ensureInitialized();
         return switch (source) {
-            case ACHN -> "https://acnhapi.com/v1/villagers/" + random.nextInt(1,390);
-            case CATS -> "https://cat-fact.herokuapp.com/" + "facts";
+            case JOKES -> "https://geek-jokes.sameerkumar.website/api?format=json";
+            case CATS -> "https://meowfacts.herokuapp.com/";
             case DND -> "https://www.dnd5eapi.co/api/2014/" + randomizeDnD();
         };
     }

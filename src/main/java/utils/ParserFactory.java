@@ -3,7 +3,7 @@ package utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import core.DataRecord;
 import core.Source;
-import parsers.ACHNParser;
+import parsers.JokesParser;
 import parsers.CatsFactParser;
 import parsers.DnDParser;
 
@@ -19,7 +19,7 @@ public class ParserFactory {
         try {
             return switch (source) {
                 case CATS -> new CatsFactParser().parse(json);
-                case ACHN -> new ACHNParser().parse(json);
+                case JOKES -> new JokesParser().parse(json);
                 case DND -> new DnDParser().parse(json);
             };
         } catch (JsonProcessingException e) {
