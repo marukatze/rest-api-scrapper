@@ -46,12 +46,15 @@ public class DataWriter implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
                 write();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (IOException e) {
+                // kind of logging
+                System.err.println(e);
             }
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
