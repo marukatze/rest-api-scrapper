@@ -31,11 +31,13 @@ public class Main {
         }
 
         ExecutorService executors = Executors.newFixedThreadPool(n + 1);
-        executors.submit(new DataWriter(queue, format));
+        DataWriter writer = new DataWriter(queue, format);
+        executors.submit(writer);
         tasks.forEach(executors::submit);
 
         //graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            writer.closeFile();
             executors.shutdownNow();
             System.out.println("Executor stopped.");
         }));

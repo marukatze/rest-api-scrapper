@@ -10,6 +10,8 @@ public class DataWriter implements Runnable {
     private final FileFormat format;
     private final BlockingQueue<DataRecord> records;
     private final ObjectMapper mapper = new ObjectMapper();
+    private boolean firstRecord = true;
+    private volatile boolean closed = false;
 
     public DataWriter(BlockingQueue<DataRecord> records, FileFormat format) {
         this.records = records;
@@ -28,8 +30,14 @@ public class DataWriter implements Runnable {
 
     private void writeJSON(DataRecord record) throws IOException {
         try (FileWriter writer = new FileWriter("data.json", true)) {
+            if (firstRecord) {
+                writer.write("[\n");
+                firstRecord = false;
+            } else {
+                writer.write(",\n");
+            }
             String json = mapper.writeValueAsString(record);
-            writer.write(json + System.lineSeparator());
+            writer.write(json);
         }
     }
 
@@ -44,18 +52,29 @@ public class DataWriter implements Runnable {
         }
     }
 
-    @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
                 write();
                 System.out.println("record is written correctly");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (IOException e) {
-                // kind of logging
-                System.err.println(e);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (IOException e) {
+            System.err.println(e);
+        } finally {
+            closeFile();
+        }
+    }
+
+    public void closeFile() {
+        if (closed) return;
+        closed = true;
+        try (FileWriter writer = new FileWriter("data.json", true)) {
+            writer.write("\n]\n");
+            System.out.println("JSON file closed properly.");
+        } catch (IOException e) {
+            System.err.println("Error while closing JSON file: " + e.getMessage());
         }
     }
 }
