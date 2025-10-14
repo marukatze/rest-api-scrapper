@@ -16,7 +16,7 @@ public class Main {
     private static FileFormat format;
 
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         try {
             parseArgs(args);
         } catch (InvalidFileFormat | InvalidSource | NumberFormatException e) {
