@@ -25,24 +25,24 @@ public class Main {
         }
 
         BlockingQueue<DataRecord> queue = new LinkedBlockingQueue<>();
-        List<Runnable> tasks = new ArrayList<>();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(n + 1);
+
+        DataWriter writer = new DataWriter(queue, format);
+        executor.submit(writer);
+
+        // создаём poller для каждого источника
         for (Source source : sources) {
-            tasks.add(new APIPoller(source, queue, t));
+            APIPoller poller = new APIPoller(source, queue, t, executor);
+            executor.submit(poller);
         }
 
-        ExecutorService executors = Executors.newFixedThreadPool(n + 1);
-        DataWriter writer = new DataWriter(queue, format);
-        executors.submit(writer);
-        tasks.forEach(executors::submit);
-
-        //graceful shutdown
+        // graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             writer.closeFile();
-            executors.shutdownNow();
+            executor.shutdownNow();
             System.out.println("Executor stopped.");
         }));
     }
-
 
     private static void parseArgs(String[] args) throws InvalidFileFormat, NumberFormatException {
         List<String> params = new java.util.ArrayList<>(Arrays.stream(args).toList());

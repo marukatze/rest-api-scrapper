@@ -9,41 +9,45 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class APIPoller implements Runnable {
     private final BlockingQueue<DataRecord> records;
     private static final HttpClient client = HttpClient.newHttpClient();
-    private final int timeout;
     private final RandomRequestBuilder creator;
     private final ParserFactory factory;
-    private Source source;
+    private final Source source;
+    private final int delaySeconds;
+    private final ScheduledExecutorService executor;
 
-    public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
-        this.records = records;
-        creator = new RandomRequestBuilder(source);
-        timeout = t;
-        factory = new ParserFactory(source);
+    public APIPoller(Source source, BlockingQueue<DataRecord> queue,
+                     int delaySeconds, ScheduledExecutorService executor) {
         this.source = source;
+        this.records = queue;
+        this.delaySeconds = delaySeconds;
+        this.executor = executor;
+        creator = new RandomRequestBuilder(source);
+        factory = new ParserFactory(source);
     }
 
     @Override
     public void run() {
         try {
-            while (!Thread.currentThread().isInterrupted()) {
-                String json = poll();
-                System.out.println(source + " response is taken correctly: " + json);
-                if (json == null || json.isBlank() || json.equals("{}")) {
-                    System.out.println("empty response");
-                    continue;
-                }
+            String json = poll();
+            System.out.println(source + " response is taken correctly: " + json);
+            if (json == null || json.isBlank() || json.equals("{}")) {
+                System.out.println("empty response");
+            } else {
                 records.put(factory.parse(json));
                 System.out.println(source + " ready to sleep");
-                TimeUnit.SECONDS.sleep(timeout);
             }
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
-        }
+        } finally {
+        // 2. Планируем новый запуск этого же poller’а
+        executor.schedule(() -> executor.submit(this), delaySeconds, TimeUnit.SECONDS);
+    }
     }
 
     private String poll() throws IOException, InterruptedException {
