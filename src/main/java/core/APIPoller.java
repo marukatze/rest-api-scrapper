@@ -35,8 +35,8 @@ public class APIPoller implements Runnable {
     public void run() {
         try {
             String json = poll();
-            System.out.println(source + " response is taken correctly: " + json);
-            if (json == null || json.isBlank() || json.equals("{}")) {
+            System.out.println(source + " response is taken correctly: " + json.replace('\n', ' '));
+            if (json.isBlank() || json.equals("{}")) {
                 System.out.println("empty response");
             } else {
                 records.put(factory.parse(json));
