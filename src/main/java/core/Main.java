@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class App {
+public class Main {
     private static int n;
     private static int t;
     private static List<Source> sources;
@@ -29,12 +29,16 @@ public class App {
             tasks.add(new APIPoller(source, queue, t));
         }
 
-        try (ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(n)) {
-            tasks.forEach(executor::submit);
-            Thread dataWriter = new Thread(new DataWriter(queue, format));
+        try (ExecutorService pollers = Executors.newFixedThreadPool(n);
+             ExecutorService dataWriter = Executors.newSingleThreadExecutor()) {
+
+            tasks.forEach(pollers::submit);
+            datawriter.submit(new DataWriter(queue, format));
         }
 
+
     }
+
 
     private static void parseArgs(String[] args) throws InvalidFileFormat, NumberFormatException {
         List<String> params = new java.util.ArrayList<>(Arrays.stream(args).toList());
@@ -63,3 +67,4 @@ public class App {
         }
     }
 }
+
