@@ -47,7 +47,7 @@ public class RandomRequestBuilder {
     private String randomizeDnD() {
         String dataType;
         String requestEntity;
-        if (random.nextInt(0, 2) == 0)  {
+        if (random.nextInt(2) == 0)  {
             dataType = "monsters/";
             requestEntity = monsters.get(random.nextInt(monsters.size()));
         } else {
