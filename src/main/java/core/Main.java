@@ -21,6 +21,7 @@ public class Main {
             parseArgs(args);
         } catch (InvalidFileFormat | InvalidSource | NumberFormatException e) {
             System.err.println(e);
+            return;
         }
 
         BlockingQueue<DataRecord> queue = new LinkedBlockingQueue<>();
@@ -45,8 +46,8 @@ public class Main {
         List<String> params = new java.util.ArrayList<>(Arrays.stream(args).toList());
         n = Integer.parseInt(params.get(0));
         t = Integer.parseInt(params.get(1));
-        params.remove(0);
-        params.remove(1);
+        params.removeFirst();
+        params.removeFirst();
 
         if (params.getLast().toLowerCase().contains("json")) {
             format = FileFormat.JSON;
@@ -60,11 +61,7 @@ public class Main {
         }
 
         for (String param : params) {
-            try {
-                sources.add(SourceChecker.checkSource(param));
-            } catch (InvalidSource e) {
-                System.err.println(e);
-            }
+            sources.add(SourceChecker.checkSource(param));
         }
     }
 }
