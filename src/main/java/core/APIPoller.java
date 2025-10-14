@@ -12,22 +12,21 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class APIPoller implements Runnable {
-    private final Source source;
     private final BlockingQueue<DataRecord> records;
     private static final HttpClient client = HttpClient.newHttpClient();
     private final int timeout;
     private final RandomRequestBuilder creator;
+    private final ParserFactory factory;
 
     public APIPoller(Source source, BlockingQueue<DataRecord> records, int t) {
-        this.source = source;
         this.records = records;
         creator = new RandomRequestBuilder(source);
         timeout = t;
+        factory = new ParserFactory(source);
     }
 
     @Override
     public void run() {
-        ParserFactory factory = new ParserFactory(source);
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 String json = poll();
