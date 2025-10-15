@@ -45,9 +45,8 @@ public class APIPoller implements Runnable {
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         } finally {
-        // 2. Планируем новый запуск этого же poller’а
-        executor.schedule(() -> executor.submit(this), delaySeconds, TimeUnit.SECONDS);
-    }
+            executor.schedule(() -> executor.submit(this), delaySeconds, TimeUnit.SECONDS);
+        }
     }
 
     private String poll() throws IOException, InterruptedException {
