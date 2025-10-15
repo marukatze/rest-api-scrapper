@@ -19,9 +19,16 @@ public class CatsFactParserTest {
     }
 
     @Test
-    void parse_shouldThrowJsonProcessingException() throws JsonProcessingException {
+    void parse_shouldThrowJsonProcessingException() {
         String json = "{\"data\":{\"fact\"]}";
         CatsFactParser parser = new CatsFactParser();
         assertThrows(JsonProcessingException.class, () -> parser.parse(json));
+    }
+
+    @Test
+    void parse_shouldThrowNullPointerException() {
+        String json = "{\"fact\":[\"data\"]}";
+        CatsFactParser parser = new CatsFactParser();
+        assertThrows(NullPointerException.class, () -> parser.parse(json));
     }
 }
