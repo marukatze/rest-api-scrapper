@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 
 public class DataWriter implements Runnable {
@@ -52,8 +54,11 @@ public class DataWriter implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         try {
+            Files.deleteIfExists(Paths.get("data.json"));
+            Files.deleteIfExists(Paths.get("data.csv"));
             while (!Thread.currentThread().isInterrupted()) {
                 write();
                 System.out.println("record is written correctly");
