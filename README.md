@@ -5,18 +5,6 @@ Built using **`java.util.concurrent`**, **Jackson**, and **Java HTTP Client**.
 
 ---
 
-## 📜 Table of Contents
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Project Structure](#project-structure)
-4. [How It Works](#how-it-works)
-5. [Setup and Run](#setup-and-run)
-6. [Tests](#tests)
-7. [Used Technologies](#used-technologies)
-8. [Original Assignment (RU)](#original-assignment-ru)
-
----
-
 ## 🧩 Overview
 The project is a **multithreaded REST API Scraper**, designed to periodically fetch data from multiple REST APIs concurrently.  
 Each API source is handled by its own thread, but the total number of active threads never exceeds a user-defined limit.  
