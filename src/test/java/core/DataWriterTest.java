@@ -15,14 +15,14 @@ class DataWriterTest {
     @BeforeEach
     void setUp() throws IOException {
         queue = new LinkedBlockingQueue<>();
-        Files.deleteIfExists(Paths.get("data.json"));
-        Files.deleteIfExists(Paths.get("data.csv"));
+        Files.deleteIfExists(Paths.get("src\\main\\resources\\data.json"));
+        Files.deleteIfExists(Paths.get("src\\main\\resources\\data.csv"));
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        Files.deleteIfExists(Paths.get("data.json"));
-        Files.deleteIfExists(Paths.get("data.csv"));
+        Files.deleteIfExists(Paths.get("src\\main\\resources\\data.json"));
+        Files.deleteIfExists(Paths.get("src\\main\\resources\\data.csv"));
     }
 
     @Test
@@ -44,7 +44,7 @@ class DataWriterTest {
 
         writer.closeFile();
 
-        String content = Files.readString(Paths.get("data.json"));
+        String content = Files.readString(Paths.get("src\\main\\resources\\data.json"));
         assertTrue(content.contains("\"Cats are cool!\""));
         assertTrue(content.startsWith("["));
         assertTrue(content.endsWith("]\n"));
@@ -67,17 +67,17 @@ class DataWriterTest {
         t.start();
         t.join();
 
-        String content = Files.readString(Paths.get("data.csv"));
-        assertTrue(content.contains("JOKES,Joke of the day,Programmers hate bugs"));
+        String content = Files.readString(Paths.get("src\\main\\resources\\data.csv"));
+        assertTrue(content.contains("geek-jokes-api,joke,Programmers hate bugs"));
     }
 
     @Test
     void closeFile_shouldAppendClosingBracketToJson() throws Exception {
-        Files.writeString(Paths.get("data.json"), "[{\"test\":true}");
+        Files.writeString(Paths.get("src\\main\\resources\\data.json"), "[{\"test\":true}");
         DataWriter writer = new DataWriter(queue, FileFormat.JSON);
         writer.closeFile();
 
-        String content = Files.readString(Paths.get("data.json"));
+        String content = Files.readString(Paths.get("src\\main\\resources\\data.json"));
         assertTrue(content.endsWith("]\n"), "File should end with a closing bracket and newline");
     }
 }
