@@ -27,7 +27,7 @@ class DataWriterTest {
 
     @Test
     void writeJSON_shouldCreateValidJsonFile() throws Exception {
-        DataRecord record = new DataRecord("CATS", "Cat Fact", "Cats are cool!");
+        DataRecord record = new DataRecord("meowfacts-api", "cat-fact", "Cats are cool!");
         queue.put(record);
 
         DataWriter writer = new DataWriter(queue, FileFormat.JSON);
@@ -44,7 +44,6 @@ class DataWriterTest {
 
         writer.closeFile();
 
-        // проверяем содержимое
         String content = Files.readString(Paths.get("data.json"));
         assertTrue(content.contains("\"Cats are cool!\""));
         assertTrue(content.startsWith("["));
@@ -53,7 +52,7 @@ class DataWriterTest {
 
     @Test
     void writeCSV_shouldCreateValidCsvFile() throws Exception {
-        DataRecord record = new DataRecord("JOKES", "Joke of the day", "Programmers hate bugs");
+        DataRecord record = new DataRecord("geek-jokes-api", "joke", "Programmers hate bugs");
         queue.put(record);
 
         DataWriter writer = new DataWriter(queue, FileFormat.CSV);
