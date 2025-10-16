@@ -20,7 +20,6 @@ public class Main {
         try {
             parseArgs(args);
         } catch (InvalidFileFormat | InvalidSource | NumberFormatException e) {
-            System.err.println(e);
             return;
         }
 
