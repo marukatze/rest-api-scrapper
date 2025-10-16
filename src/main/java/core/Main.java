@@ -30,7 +30,6 @@ public class Main {
         DataWriter writer = new DataWriter(queue, format);
         executor.submit(writer);
 
-        // создаём poller для каждого источника
         for (Source source : sources) {
             APIPoller poller = new APIPoller(source, queue, t, executor);
             executor.submit(poller);
