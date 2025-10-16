@@ -49,7 +49,7 @@ public class APIPoller implements Runnable {
         }
     }
 
-    private String poll() throws IOException, InterruptedException {
+    protected String poll() throws IOException, InterruptedException {
         String url = creator.randomizeURL();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
