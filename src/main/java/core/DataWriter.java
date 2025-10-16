@@ -44,7 +44,7 @@ public class DataWriter implements Runnable {
     }
 
     private void writeCSV(DataRecord record) throws IOException {
-        try (FileWriter writer = new FileWriter("data.csv", true)) {
+        try (FileWriter writer = new FileWriter("src\\main\\resources\\data.csv", true)) {
 
             String csvLine = String.join(",",
                     record.source(),
@@ -75,7 +75,7 @@ public class DataWriter implements Runnable {
     public void closeFile() {
         if (closed) return;
         closed = true;
-        try (FileWriter writer = new FileWriter("data.json", true)) {
+        try (FileWriter writer = new FileWriter("src\\main\\resources\\data.json", true)) {
             writer.write("\n]\n");
             System.out.println("JSON file closed properly.");
         } catch (IOException e) {
