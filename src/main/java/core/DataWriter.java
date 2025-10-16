@@ -31,7 +31,7 @@ public class DataWriter implements Runnable {
     }
 
     private void writeJSON(DataRecord record) throws IOException {
-        try (FileWriter writer = new FileWriter("data.json", true)) {
+        try (FileWriter writer = new FileWriter("src\\main\\resources\\data.json", true)) {
             if (firstRecord) {
                 writer.write("[\n");
                 firstRecord = false;
@@ -57,8 +57,8 @@ public class DataWriter implements Runnable {
     @Override
     public void run() {
         try {
-            Files.deleteIfExists(Paths.get("data.json"));
-            Files.deleteIfExists(Paths.get("data.csv"));
+            Files.deleteIfExists(Paths.get("src\\main\\resources\\data.json"));
+            Files.deleteIfExists(Paths.get("src\\main\\resources\\data.csv"));
             while (!Thread.currentThread().isInterrupted()) {
                 write();
                 System.out.println("record is written correctly");
